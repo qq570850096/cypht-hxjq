@@ -21,6 +21,7 @@ RUN set -eux \
         unzip \
         ca-certificates \
         curl \
+        git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         session \
@@ -58,7 +59,7 @@ COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 
 COPY composer.* ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader --no-interaction --prefer-source
 
 COPY assets/ assets/
 COPY config/ config/
