@@ -582,6 +582,11 @@ class Hm_Output_display_configured_imap_servers extends Hm_Output_Module {
             $res .= '<label for="imap_pass_'.$server_id.'">'.$this->trans('IMAP password').'</label></div>';
             $res .= '</div><div class="col-md-6 col-lg-4">';
 
+            $group = $vals['group'] ?? '';
+            $res .= '<div class="form-floating">';
+            $res .= '<input id="imap_group_'.$server_id.'" class="form-control imap_group" type="text" name="imap_group" value="'.$this->html_safe($group).'" maxlength="40" placeholder="'.$this->trans('Group').'">';
+            $res .= '<label for="imap_group_'.$server_id.'">'.$this->trans('Group').'</label></div>';
+
             // Sieve Host (Conditional)
 
             if ($this->get('sieve_filters_enabled') && isset($vals['sieve_config_host'])) {
@@ -610,6 +615,7 @@ class Hm_Output_display_configured_imap_servers extends Hm_Output_Module {
             $hidden = array_key_exists('hide', $vals) && $vals['hide'];
             $res .= '<input type="submit" '.($hidden ? 'style="display: none;" ' : '').'value="'.$this->trans('Hide').'" class="hide_imap_connection btn btn-outline-secondary btn-sm me-2 mt-3" />';
             $res .= '<input type="submit" '.(!$hidden ? 'style="display: none;" ' : '').'value="'.$this->trans('Unhide').'" class="unhide_imap_connection btn btn-outline-secondary btn-sm me-2 mt-3" />';
+            $res .= '<input type="submit" value="'.$this->trans('Save group').'" class="save_imap_group btn btn-outline-primary btn-sm me-2 mt-3" />';
 
             $res .= '<input type="hidden" value="ajax_imap_debug" name="hm_ajax_hook" />';
             $res .= '</div></div></div></form></div>';
@@ -945,12 +951,24 @@ class Hm_Output_filter_imap_folders extends Hm_Output_Module {
     protected function output() {
         $res = '';
         if ($this->get('imap_folders')) {
+            $servers = $this->get('imap_servers', array());
+            $groups = array();
             foreach ($this->get('imap_folders', array()) as $id => $folder) {
+                $group = trim($servers[$id]['group'] ?? '');
+                if (!$group) {
+                    $group = $this->trans('Ungrouped');
+                }
+                $groups[$group][$id] = $folder;
+            }
+            foreach ($groups as $group => $folders) {
+                $res .= '<li class="imap_folder_group text-muted fw-bold mt-2">'.$this->html_safe($group).'</li>';
+                foreach ($folders as $id => $folder) {
                 $res .= '<li class="imap_'.$id.'_" data-server-id="' . $id . '"><a href="#" class="imap_folder_link" data-target="imap_'.$id.'_">';
                 if (!$this->get('hide_folder_icons')) {
                     $res .= '<i class="bi bi-folder me-2"></i>';
                 }
                 $res .= $this->html_safe($folder).'</a><span class="unread_count unread_imap_server_'.$id.'"></span></li>';
+                }
             }
         }
         if ($res) {

@@ -25,20 +25,21 @@ function imap_sources($mod, $folder = 'sent') {
         if (array_key_exists('hide', $vals) && $vals['hide']) {
             continue;
         }
+        $source_base = array('type' => $vals['type'] ?? 'imap', 'name' => $vals['name'], 'id' => $index, 'account_group' => $vals['group'] ?? '');
         $folders = get_special_folders($mod, $index);
         if (array_key_exists($folder, $folders) && $folders[$folder]) {
-            $sources[] = array('folder' => bin2hex($folders[$folder]), 'folder_name' => $folders[$folder], 'type' => $vals['type'] ?? 'imap', 'name' => $vals['name'], 'id' => $index);
+            $sources[] = array_merge($source_base, array('folder' => bin2hex($folders[$folder]), 'folder_name' => $folders[$folder]));
         }
         elseif ($inbox) {
-            $sources[] = array('folder' => bin2hex('INBOX'), 'folder_name' => 'INBOX', 'type' => $vals['type'] ?? 'imap', 'name' => $vals['name'], 'id' => $index);
+            $sources[] = array_merge($source_base, array('folder' => bin2hex('INBOX'), 'folder_name' => 'INBOX'));
         }
         elseif ($folder=="snoozed"){
-            $sources[] = array('folder' => bin2hex('Snoozed'), 'folder_name' => 'Snoozed', 'type' => $vals['type'] ?? 'imap','name' => $vals['name'],'id' => $index);
+            $sources[] = array_merge($source_base, array('folder' => bin2hex('Snoozed'), 'folder_name' => 'Snoozed'));
         } elseif ($folder == "scheduled") {
-            $sources[] = array('folder' => bin2hex('Scheduled'), 'folder_name' => 'Scheduled', 'type' => $vals['type'] ?? 'imap', 'name' => $vals['name'], 'id' => $index);
+            $sources[] = array_merge($source_base, array('folder' => bin2hex('Scheduled'), 'folder_name' => 'Scheduled'));
         }
         else {
-            $sources[] = array('folder' => bin2hex('SPECIAL_USE_CHECK'), 'folder_name' => 'SPECIAL_USE_CHECK', 'nodisplay' => true, 'type' => $vals['type'] ?? 'imap', 'name' => $vals['name'], 'id' => $index);
+            $sources[] = array_merge($source_base, array('folder' => bin2hex('SPECIAL_USE_CHECK'), 'folder_name' => 'SPECIAL_USE_CHECK', 'nodisplay' => true));
         }
     }
     return $sources;
@@ -63,7 +64,7 @@ function imap_data_sources($custom=array()) {
         $mailbox = Hm_IMAP_List::get_mailbox_without_connection($vals);
         $folder = $mailbox->get_folder_name('INBOX');
         $sieve = ! empty($vals['sieve_config_host']);
-        $sources[] = array('folder' => bin2hex($folder), 'folder_name' => $folder, 'type' => $vals['type'] ?? 'imap', 'name' => $vals['name'], 'id' => $index,  'sieve' => $sieve);
+        $sources[] = array('folder' => bin2hex($folder), 'folder_name' => $folder, 'type' => $vals['type'] ?? 'imap', 'name' => $vals['name'], 'id' => $index, 'account_group' => $vals['group'] ?? '', 'sieve' => $sieve);
     }
     foreach ($custom as $path => $type) {
         $parts = explode('_', $path, 3);
@@ -79,7 +80,7 @@ function imap_data_sources($custom=array()) {
                         $folder_name = $mailbox->get_folder_name(hex2bin($folder_name));
                     }
                 }
-                $sources[] = array('folder' => $parts[2], 'folder_name' => $folder_name, 'type' => $details['type'] ?? 'imap', 'name' => $details['name'], 'id' => $parts[1]);
+                $sources[] = array('folder' => $parts[2], 'folder_name' => $folder_name, 'type' => $details['type'] ?? 'imap', 'name' => $details['name'], 'id' => $parts[1], 'account_group' => $details['group'] ?? '');
             }
         }
         elseif ($type == 'remove') {

@@ -2269,6 +2269,46 @@ class Hm_Handler_imap_hide extends Hm_Handler_Module {
 }
 
 /**
+ * Update an IMAP server group label
+ * @subpackage imap/handler
+ */
+class Hm_Handler_imap_group extends Hm_Handler_Module {
+    /**
+     * Save a short group label for account organization
+     */
+    public function process() {
+        if (isset($this->request->post['save_imap_group'])) {
+            list($success, $form) = $this->process_form(array('imap_server_id', 'imap_group'));
+            if ($success) {
+                $group = trim(preg_replace('/\s+/', ' ', $form['imap_group']));
+                if (mb_strlen($group) > 40) {
+                    $group = mb_substr($group, 0, 40);
+                }
+                if (Hm_IMAP_List::edit($form['imap_server_id'], array('group' => $group))) {
+                    Hm_Msgs::add($group ? sprintf('Account group saved: %s', $group) : 'Account group cleared');
+                    $this->session->record_unsaved('IMAP server group updated');
+
+                    $save_key = $this->session->get('settings_save_key', false);
+                    $user = $this->session->get('username', false);
+                    if ($user && $save_key) {
+                        try {
+                            $this->user_config->save($user, $save_key);
+                            $this->session->set('user_data', $this->user_config->dump());
+                            $this->session->set('changed_settings', array());
+                        } catch (Exception $e) {
+                            Hm_Msgs::add('Group saved for this session, but could not persist settings: '.$e->getMessage(), 'warning');
+                        }
+                    }
+                    else {
+                        Hm_Msgs::add('Group saved for this session. Log out and back in once to enable automatic database persistence.', 'warning');
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
  * Delete an IMAP server
  * @subpackage imap/handler
  */

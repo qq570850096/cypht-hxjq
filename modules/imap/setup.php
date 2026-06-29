@@ -134,6 +134,7 @@ add_handler('ajax_imap_debug', 'load_smtp_servers_from_config', true, 'smtp', 'p
 add_handler('ajax_imap_debug', 'load_imap_servers_from_config',  true);
 add_handler('ajax_imap_debug', 'imap_oauth2_token_check', true);
 add_handler('ajax_imap_debug', 'imap_hide', true);
+add_handler('ajax_imap_debug', 'imap_group', true);
 add_handler('ajax_imap_debug', 'imap_connect', true);
 add_handler('ajax_imap_debug', 'imap_delete', true);
 add_handler('ajax_imap_debug', 'save_imap_cache',  true);
@@ -376,6 +377,8 @@ return array(
         'imap_server_ids' => FILTER_UNSAFE_RAW,
         'imap_user' => FILTER_UNSAFE_RAW,
         'imap_pass' => FILTER_UNSAFE_RAW,
+        'imap_group' => FILTER_UNSAFE_RAW,
+        'save_imap_group' => FILTER_VALIDATE_BOOLEAN,
         'text_only' => FILTER_VALIDATE_BOOLEAN,
         'msg_part_icons' => FILTER_VALIDATE_BOOLEAN,
         'simple_msg_parts' => FILTER_VALIDATE_BOOLEAN,

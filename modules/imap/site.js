@@ -66,11 +66,26 @@ var imap_test_action = function(event) {
     );
 }
 
+var imap_group_action = function(event) {
+    event.preventDefault();
+    var form = $(this).closest('.imap_connect');
+    Hm_Ajax.request(
+        [{'name': 'hm_ajax_hook', 'value': 'ajax_imap_debug'},
+            {'name': 'imap_server_id', 'value': $('.imap_server_id', form).val()},
+            {'name': 'imap_group', 'value': $('.imap_group', form).val()},
+            {'name': 'save_imap_group', 'value': 1}],
+        function() {
+            Hm_Folders.reload_folders(true);
+        }
+    );
+}
+
 var imapServersPageHandler = function() {
     $('.imap_delete').on('click', imap_delete_action);
     $('.hide_imap_connection').on('click', imap_hide);
     $('.unhide_imap_connection').on('click', imap_unhide);
     $('.test_imap_connect').on('click', imap_test_action);
+    $('.save_imap_group').on('click', imap_group_action);
     $('.edit_ews_server_connection').on('click', ews_edit_action);
 
     ews_init_sig_editor();

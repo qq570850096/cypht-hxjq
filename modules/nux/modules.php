@@ -113,6 +113,13 @@ class Hm_Handler_process_oauth2_authorization extends Hm_Handler_Module {
                 $oauth2 = new Hm_Oauth2($details['client_id'], $details['client_secret'], $details['redirect_uri']);
                 $result = $oauth2->request_token($details['token_uri'], $this->request->get['code']);
                 if (!empty($result) && array_key_exists('access_token', $result)) {
+                    $account_group = '';
+                    if (!empty($details['id']) && mb_stripos($details['id'], 'gmail') !== false) {
+                        $account_group = 'Gmail';
+                    }
+                    elseif (!empty($details['id']) && (mb_stripos($details['id'], 'outlook') !== false || mb_stripos($details['id'], 'microsoft') !== false || mb_stripos($details['id'], 'office365') !== false)) {
+                        $account_group = 'Outlook';
+                    }
                     Hm_IMAP_List::add(array(
                         'name' => $details['name'],
                         'server' => $details['server'],
@@ -124,7 +131,8 @@ class Hm_Handler_process_oauth2_authorization extends Hm_Handler_Module {
                         'refresh_token' => $result['refresh_token'],
                         'auth' => 'xoauth2',
                         'type' => $details['type'],
-                        'oauth_provider' => $details['id']
+                        'oauth_provider' => $details['id'],
+                        'group' => $account_group
                     ));
                     if (isset($details['smtp'])) {
                         Hm_SMTP_List::add(array(

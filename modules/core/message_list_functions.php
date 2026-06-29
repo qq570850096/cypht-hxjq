@@ -522,6 +522,7 @@ if (!hm_exists('list_sources')) {
 function list_sources($sources, $output_mod) {
     $res = '<div class="list_sources w-100 mt-2">';
     $res .= '<div class="src_title fs-5 mb-2">'.$output_mod->html_safe('Sources').'</div>';
+    $grouped = array();
     foreach ($sources as $src) {
         if (array_key_exists('group', $src) && $src['group'] == 'background') {
             continue;
@@ -539,7 +540,17 @@ function list_sources($sources, $output_mod) {
             $folder = $src['folder_name'];
         }
         $label = trim($src['type'].' '.$src['name'].' '.$folder);
-        $res .= '<div class="list_src" title="'.$output_mod->html_safe($label).'">'.$output_mod->html_safe($label).'</div>';
+        $group = trim($src['account_group'] ?? '');
+        if (!$group) {
+            $group = $output_mod->trans('Ungrouped');
+        }
+        $grouped[$group][] = $label;
+    }
+    foreach ($grouped as $group => $labels) {
+        $res .= '<div class="list_src_group mt-2 mb-1 fw-bold">'.$output_mod->html_safe($group).'</div>';
+        foreach ($labels as $label) {
+            $res .= '<div class="list_src" title="'.$output_mod->html_safe($label).'">'.$output_mod->html_safe($label).'</div>';
+        }
     }
     $res .= '</div>';
     return $res;
