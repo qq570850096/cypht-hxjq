@@ -106,6 +106,36 @@ class Hm_Handler_nux_homepage_data extends Hm_Handler_Module {
  * @subpackage nux/handler
  */
 class Hm_Handler_process_oauth2_authorization extends Hm_Handler_Module {
+    private function persist_oauth_servers($user, $save_key, $imap_server_id, $smtp_server_id=false) {
+        $latest_config = load_user_config_object($this->config);
+        $latest_config->load($user, $save_key);
+        if ($latest_config->decrypt_failed) {
+            throw new Exception('Could not load latest user settings before saving.');
+        }
+
+        $latest_data = $latest_config->dump();
+        $imap_servers = $latest_data['imap_servers'] ?? array();
+        $imap_server = Hm_IMAP_List::dump($imap_server_id, true);
+        if ($imap_server) {
+            $imap_servers[$imap_server_id] = $imap_server;
+            $latest_config->set('imap_servers', $imap_servers);
+        }
+
+        if ($smtp_server_id) {
+            $smtp_servers = $latest_data['smtp_servers'] ?? array();
+            $smtp_server = Hm_SMTP_List::dump($smtp_server_id, true);
+            if ($smtp_server) {
+                $smtp_servers[$smtp_server_id] = $smtp_server;
+                $latest_config->set('smtp_servers', $smtp_servers);
+            }
+        }
+
+        $latest_config->save($user, $save_key);
+        $this->user_config->reload($latest_config->dump(), $user);
+        $this->session->set('user_data', $this->user_config->dump());
+        $this->session->set('changed_settings', array());
+    }
+
     public function process() {
         if (array_key_exists('state', $this->request->get) && $this->request->get['state'] == 'nux_authorization') {
             if (array_key_exists('code', $this->request->get)) {
@@ -120,7 +150,7 @@ class Hm_Handler_process_oauth2_authorization extends Hm_Handler_Module {
                     elseif (!empty($details['id']) && (mb_stripos($details['id'], 'outlook') !== false || mb_stripos($details['id'], 'microsoft') !== false || mb_stripos($details['id'], 'office365') !== false)) {
                         $account_group = 'Outlook';
                     }
-                    Hm_IMAP_List::add(array(
+                    $imap_server_id = Hm_IMAP_List::add(array(
                         'name' => $details['name'],
                         'server' => $details['server'],
                         'port' => $details['port'],
@@ -134,8 +164,9 @@ class Hm_Handler_process_oauth2_authorization extends Hm_Handler_Module {
                         'oauth_provider' => $details['id'],
                         'group' => $account_group
                     ));
+                    $smtp_server_id = false;
                     if (isset($details['smtp'])) {
-                        Hm_SMTP_List::add(array(
+                        $smtp_server_id = Hm_SMTP_List::add(array(
                             'name' => $details['name'],
                             'server' => $details['smtp']['server'],
                             'port' => $details['smtp']['port'],
@@ -154,9 +185,7 @@ class Hm_Handler_process_oauth2_authorization extends Hm_Handler_Module {
                     $user = $this->session->get('username', false);
                     if ($user && $save_key) {
                         try {
-                            $this->user_config->save($user, $save_key);
-                            $this->session->set('user_data', $this->user_config->dump());
-                            $this->session->set('changed_settings', array());
+                            $this->persist_oauth_servers($user, $save_key, $imap_server_id, $smtp_server_id);
                             Hm_Msgs::add("E-mail account successfully added and saved.");
                         } catch (Exception $e) {
                             Hm_Msgs::add('E-mail account successfully added, but could not save settings: '.$e->getMessage(), 'warning');

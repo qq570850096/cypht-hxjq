@@ -767,7 +767,18 @@ class Hm_Handler_load_user_data extends Hm_Handler_Module {
             }
             else {
                 $user_data = $this->session->get('user_data', array());
-                if (!empty($user_data)) {
+                $save_key = $this->session->get('settings_save_key', false);
+                $username = $this->session->get('username');
+                if ($username && $save_key) {
+                    $this->user_config->load($username, $save_key);
+                    if (!$this->user_config->decrypt_failed) {
+                        $this->session->set('user_data', $this->user_config->dump());
+                    }
+                    elseif (!empty($user_data)) {
+                        $this->user_config->reload($user_data, $username);
+                    }
+                }
+                elseif (!empty($user_data)) {
                     $this->user_config->reload($user_data, $this->session->get('username'));
                 }
                 $pages = $this->user_config->get('saved_pages', array());

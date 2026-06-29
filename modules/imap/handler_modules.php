@@ -2273,6 +2273,31 @@ class Hm_Handler_imap_hide extends Hm_Handler_Module {
  * @subpackage imap/handler
  */
 class Hm_Handler_imap_group extends Hm_Handler_Module {
+    private function persist_group($user, $save_key, $server_id, $group) {
+        $latest_config = load_user_config_object($this->config);
+        $latest_config->load($user, $save_key);
+        if ($latest_config->decrypt_failed) {
+            throw new Exception('Could not load latest user settings before saving.');
+        }
+
+        $latest_data = $latest_config->dump();
+        $imap_servers = $latest_data['imap_servers'] ?? array();
+        if (!array_key_exists($server_id, $imap_servers)) {
+            $server = Hm_IMAP_List::dump($server_id, true);
+            if (!$server) {
+                throw new Exception('IMAP server was not found.');
+            }
+            $imap_servers[$server_id] = $server;
+        }
+        $imap_servers[$server_id]['group'] = $group;
+
+        $latest_config->set('imap_servers', $imap_servers);
+        $latest_config->save($user, $save_key);
+        $this->user_config->reload($latest_config->dump(), $user);
+        $this->session->set('user_data', $this->user_config->dump());
+        $this->session->set('changed_settings', array());
+    }
+
     /**
      * Save a short group label for account organization
      */
@@ -2292,9 +2317,7 @@ class Hm_Handler_imap_group extends Hm_Handler_Module {
                     $user = $this->session->get('username', false);
                     if ($user && $save_key) {
                         try {
-                            $this->user_config->save($user, $save_key);
-                            $this->session->set('user_data', $this->user_config->dump());
-                            $this->session->set('changed_settings', array());
+                            $this->persist_group($user, $save_key, $form['imap_server_id'], $group);
                         } catch (Exception $e) {
                             Hm_Msgs::add('Group saved for this session, but could not persist settings: '.$e->getMessage(), 'warning');
                         }
