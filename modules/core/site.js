@@ -351,7 +351,7 @@ var Hm_Ajax_Request = function() { return {
  */
 function Hm_Modal(options) {
     const defaults = {
-        title: 'Cypht',
+        title: '恒兴金桥社媒邮件管理器',
         size: '',
         btnSize: '',
         modalId: 'myModal',
@@ -2305,7 +2305,7 @@ $(function() {
 
     hl_save_link();
     if (hm_mailto()) {
-        try { navigator.registerProtocolHandler("mailto", "?page=compose&compose_to=%s", "Cypht"); } catch(e) {}
+        try { navigator.registerProtocolHandler("mailto", "?page=compose&compose_to=%s", "恒兴金桥社媒邮件管理器"); } catch(e) {}
     }
 
     if (hm_mobile()) {

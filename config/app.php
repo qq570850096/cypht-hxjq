@@ -352,7 +352,7 @@ return [
     | "Your awesome webmail" to replace the Cypht name used in various places.
     |
     */
-    'app_name' => env('APP_NAME', 'Cypht'),
+    'app_name' => env('APP_NAME', '恒兴金桥社媒邮件管理器'),
 
     /*
     | ----------

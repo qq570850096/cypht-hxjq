@@ -565,8 +565,9 @@ class Hm_Output_nux_dev_news extends Hm_Output_Module {
  */
 class Hm_Output_nux_help extends Hm_Output_Module {
     protected function output() {
+        $app_name = $this->html_safe($this->get('router_app_name', '恒兴金桥社媒邮件管理器'));
         return '<div class="nux_help mt-3 col-lg-6 col-md-12 col-sm-12"><div class="card"><div class="card-body"><div class="card_title"><h4>'.$this->trans('Help').'</h4></div>'.
-            $this->trans('Cypht is a webmail aggregator client. You can use it to access your E-mail accounts from any server or service that offers any of the main protocols: IMAP/SMTP, Exchange Web Services (EWS) or the newest protocol: JMAP (RFC8621).').' '.
+            $app_name.' 是一个社媒邮件聚合管理客户端，可用于统一管理支持 IMAP/SMTP、Exchange Web Services 或 JMAP 的邮箱账户。'.
         '</div></div></div>';
     }
 }
@@ -579,7 +580,8 @@ class Hm_Output_start_welcome_dialog extends Hm_Output_Module {
         if ($this->get('single_server_mode')) {
             return '';
         }
-        $res = '<div class="nux_welcome mt-3 col-lg-6 col-md-5 col-sm-12"><div class="card"><div class="card-body"><div class="card-title"><h4>'.$this->trans('Welcome to Cypht').'</h4></div>';
+        $app_name = $this->html_safe($this->get('router_app_name', '恒兴金桥社媒邮件管理器'));
+        $res = '<div class="nux_welcome mt-3 col-lg-6 col-md-5 col-sm-12"><div class="card"><div class="card-body"><div class="card-title"><h4>欢迎使用 '.$app_name.'</h4></div>';
         $res .= '<div class="mb-3"><p>'.$this->trans('Add a popular E-mail source quickly and easily').'</p>';
         $res .= '<a class="mt-3 btn btn-outline-secondary text-decoration-none" href="'.$this->build_page_url('servers').'#quick_add_section"><i class="bi bi-person-plus me-3"></i>'.$this->trans('Add an E-mail Account').'</a>';
         $res .= '</div>';

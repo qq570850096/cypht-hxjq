@@ -34,7 +34,7 @@ class Hm_Handler_process_enable_2fa extends Hm_Handler_Module {
             }
             $username = $this->session->get('username', false);
             $secret = base32_encode_str(create_secret($secret, $username, $len));
-            $app_name = $this->config->get('app_name', 'Cypht');
+            $app_name = $this->config->get('app_name', '恒兴金桥社媒邮件管理器');
             $uri = sprintf('otpauth://totp/%s:%s?secret=%s&issuer=%s', $app_name, $username, $secret, $app_name);
             $this->out('2fa_svg', generate_qr_code($this->config, $username, $uri));
             $this->out('2fa_backup_codes', backup_codes($this->user_config));
