@@ -69,6 +69,7 @@ COPY scripts/ scripts/
 COPY database/ database/
 COPY third_party/ third_party/
 COPY index.php index.php
+COPY google*.html ./
 COPY .env.example .env
 
 COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
