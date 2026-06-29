@@ -651,6 +651,13 @@ function create_production_site($assets, $settings, $hashes) {
         copy_recursive('assets');
     }
 
+    if (is_readable('assets/legal/privacy.html')) {
+        copy('assets/legal/privacy.html', 'site/privacy.html');
+    }
+    if (is_readable('assets/legal/terms.html')) {
+        copy('assets/legal/terms.html', 'site/terms.html');
+    }
+
     $index_file = file_get_contents('index.php');
     $index_file = preg_replace("/APP_PATH', ''/", "APP_PATH', '".APP_PATH."'", $index_file);
     $index_file = preg_replace("/ASSETS_PATH', APP_PATH\.'assets\/'/", "ASSETS_PATH', WEB_ROOT.'assets/'", $index_file);
