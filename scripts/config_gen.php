@@ -657,6 +657,9 @@ function create_production_site($assets, $settings, $hashes) {
     if (is_readable('assets/legal/terms.html')) {
         copy('assets/legal/terms.html', 'site/terms.html');
     }
+    if (is_readable('assets/legal/home.html')) {
+        copy('assets/legal/home.html', 'site/home.html');
+    }
 
     $index_file = file_get_contents('index.php');
     $index_file = preg_replace("/APP_PATH', ''/", "APP_PATH', '".APP_PATH."'", $index_file);
