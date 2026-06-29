@@ -41,14 +41,14 @@ Nux_Quick_Services::add('icloud', array(
 ));
 
 Nux_Quick_Services::add('outlook', array(
-    'server' => 'outlook.office365.com',
+    'server' => 'imap-mail.outlook.com',
     'type' => 'imap',
     'tls' => true,
     'port' => 993,
     'name' => 'Outlook.com',
     'scope' => 'offline_access https://outlook.office.com/IMAP.AccessAsUser.All https://outlook.office.com/SMTP.Send',
     'smtp' => array(
-        'server' => 'smtp.office365.com',
+        'server' => 'smtp-mail.outlook.com',
         'port' => 587,
         'tls'=> false
     )
