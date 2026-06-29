@@ -333,6 +333,7 @@ if (!class_exists('Hm_IMAP')) {
                     $authed = true;
                     $this->state = 'authenticated';
                 } elseif (mb_strtolower($this->auth) == 'xoauth2' && preg_match("/^\+ ([a-zA-Z0-9=]+)$/", $response, $matches)) {
+                    error_log('IMAP XOAUTH2 challenge: '.base64_decode($matches[1]));
                     $this->send_command("\r\n", true);
                     $this->get_response();
                 }

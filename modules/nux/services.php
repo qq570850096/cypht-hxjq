@@ -41,7 +41,7 @@ Nux_Quick_Services::add('icloud', array(
 ));
 
 Nux_Quick_Services::add('outlook', array(
-    'server' => 'imap-mail.outlook.com',
+    'server' => 'outlook.office365.com',
     'type' => 'imap',
     'tls' => true,
     'port' => 993,
