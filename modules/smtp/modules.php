@@ -1776,8 +1776,14 @@ function smtp_refresh_oauth2_token($server, $config) {
     if (array_key_exists('expiration', $server) && (int) $server['expiration'] <= time()) {
         $oauth2_data = get_oauth2_data($config);
         $details = array();
-        if ($server['server'] == 'smtp.gmail.com') {
+        if (($server['oauth_provider'] ?? null) == 'gmail' || $server['server'] == 'smtp.gmail.com') {
             $details = $oauth2_data['gmail'];
+        }
+        elseif (($server['oauth_provider'] ?? null) == 'outlook') {
+            $details = $oauth2_data['outlook'];
+        }
+        elseif (($server['oauth_provider'] ?? null) == 'office365') {
+            $details = $oauth2_data['office365'];
         }
         if (!empty($details)) {
             $oauth2 = new Hm_Oauth2($details['client_id'], $details['client_secret'], $details['client_uri']);

@@ -901,13 +901,13 @@ function imap_refresh_oauth2_token($server, $config) {
     if ((int) $server['expiration'] <= time()) {
         $oauth2_data = get_oauth2_data($config);
         $details = array();
-        if ($server['server'] == 'imap.gmail.com') {
+        if (($server['oauth_provider'] ?? null) == 'gmail' || $server['server'] == 'imap.gmail.com') {
             $details = $oauth2_data['gmail'];
         }
-        elseif ($server['server'] == 'imap-mail.outlook.com') {
+        elseif (($server['oauth_provider'] ?? null) == 'outlook' || $server['server'] == 'imap-mail.outlook.com') {
             $details = $oauth2_data['outlook'];
         }
-        elseif ($server['server'] == 'imap-mail.office365.com') {
+        elseif (($server['oauth_provider'] ?? null) == 'office365' || $server['server'] == 'imap-mail.office365.com') {
             $details = $oauth2_data['office365'];
         }
         if (!empty($details)) {
