@@ -707,6 +707,9 @@ class Hm_Handler_login extends Hm_Handler_Module {
                 Hm_Msgs::add("Invalid username or password", "warning");
             }
             $this->session->set('username', rtrim($form['username']));
+            if ($this->session->is_active()) {
+                $this->session->set('settings_save_key', $form['password']);
+            }
             if ($this->config->get('redirect_after_login')) {
                 $this->out('redirect_url', $this->config->get('redirect_after_login'));
             }

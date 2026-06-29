@@ -142,7 +142,19 @@ class Hm_Handler_process_oauth2_authorization extends Hm_Handler_Module {
                         ));
                         $this->session->record_unsaved('SMTP server added');
                     }
-                    if (isPageConfigured('save')) {
+                    $save_key = $this->session->get('settings_save_key', false);
+                    $user = $this->session->get('username', false);
+                    if ($user && $save_key) {
+                        try {
+                            $this->user_config->save($user, $save_key);
+                            $this->session->set('user_data', $this->user_config->dump());
+                            $this->session->set('changed_settings', array());
+                            Hm_Msgs::add("E-mail account successfully added and saved.");
+                        } catch (Exception $e) {
+                            Hm_Msgs::add('E-mail account successfully added, but could not save settings: '.$e->getMessage(), 'warning');
+                        }
+                    }
+                    elseif (isPageConfigured('save')) {
                         Hm_Msgs::add("E-mail account successfully added, To preserve these settings after logout, please go to <a class='alert-link' href='".$this->build_page_url('save')."'>Save Settings</a>.");
                     } else {
                         Hm_Msgs::add("E-mail account successfully added.");
