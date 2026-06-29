@@ -961,14 +961,17 @@ class Hm_Output_filter_imap_folders extends Hm_Output_Module {
                 $groups[$group][$id] = $folder;
             }
             foreach ($groups as $group => $folders) {
+                $group_class = 'imap_group_'.md5($group);
                 $res .= '<li class="imap_folder_group text-muted fw-bold mt-2">'.$this->html_safe($group).'</li>';
+                $res .= '<li class="'.$group_class.' imap_folder_group_items"><ul class="inner_list">';
                 foreach ($folders as $id => $folder) {
-                $res .= '<li class="imap_'.$id.'_" data-server-id="' . $id . '"><a href="#" class="imap_folder_link" data-target="imap_'.$id.'_">';
-                if (!$this->get('hide_folder_icons')) {
-                    $res .= '<i class="bi bi-folder me-2"></i>';
+                    $res .= '<li class="imap_'.$id.'_" data-server-id="' . $id . '"><a href="#" class="imap_folder_link" data-target="imap_'.$id.'_">';
+                    if (!$this->get('hide_folder_icons')) {
+                        $res .= '<i class="bi bi-folder me-2"></i>';
+                    }
+                    $res .= $this->html_safe($folder).'</a><span class="unread_count unread_imap_server_'.$id.'"></span></li>';
                 }
-                $res .= $this->html_safe($folder).'</a><span class="unread_count unread_imap_server_'.$id.'"></span></li>';
-                }
+                $res .= '</ul></li>';
             }
         }
         if ($res) {

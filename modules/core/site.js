@@ -1400,6 +1400,15 @@ var Hm_Folders = {
     },
 
     sort_list: function(class_name, exclude_name, last_name) {
+        if (class_name === 'email_folders' && $('.email_folders .imap_folder_group_items').length) {
+            $('.email_folders .imap_folder_group_items > ul').each(function() {
+                var grouped_items = $('> li', this).sort(function(a, b) {
+                    return $(a).text().toUpperCase().localeCompare($(b).text().toUpperCase());
+                });
+                $.each(grouped_items, function(_, itm) { $(itm).parent().append(itm); });
+            });
+            return;
+        }
         var folder = $('.'+class_name+' ul');
         var listitems;
         if (exclude_name) {

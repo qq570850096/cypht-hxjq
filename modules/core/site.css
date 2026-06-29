@@ -435,6 +435,19 @@ button {
     display: inline-block; max-width: calc(var(--nav-size) - 175px);
     text-overflow: ellipsis; overflow: hidden; vertical-align: sub;
 }
+.email_folders .imap_folder_group {
+  color: var(--bs-secondary-color);
+  font-weight: 700;
+  margin-top: 0.55rem;
+  padding-bottom: 0.1rem;
+}
+.email_folders .imap_folder_group_items {
+  padding: 0;
+}
+.email_folders .imap_folder_group_items > .inner_list {
+  margin-left: 0;
+  padding-left: 0;
+}
 .inner_list li {
   margin: 2px;
   white-space: nowrap;
